@@ -1,21 +1,34 @@
 /**
  * TODO filtering controls component
- * 
+ *
  * Purpose: Provide UI for filtering todos by search, state, and date
  * Responsibility: Manages filter UI state and communicates changes to parent
  * Pattern: Controlled component with lifted state
- * 
+ *
  * Architecture note: This is a complex component that could be further decomposed
  * into SearchFilter, StateFilter, DateFilter for even better separation
  */
 
 "use client";
 
+import React from "react";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Search, X } from "lucide-react";
-import { TodoFilters as TodoFiltersType } from "../../types/todo";
+import {
+  DateFilterOption,
+  StateFilterOption,
+  TodoFilters as TodoFiltersType,
+  TodoState,
+} from "../../types/todo";
+import { TodoStats } from "./TodoStats";
 
 interface TodoFiltersProps {
   filters: TodoFiltersType;
@@ -23,7 +36,11 @@ interface TodoFiltersProps {
   onClearAll: () => void;
 }
 
-export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFiltersProps): JSX.Element {
+export function TodoFilters({
+  filters,
+  onFiltersChange,
+  onClearAll,
+}: TodoFiltersProps) {
   const hasActiveFilters =
     filters.searchQuery ||
     filters.stateFilter !== "All" ||
@@ -47,16 +64,18 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
         {/* State filter */}
         <Select
           value={filters.stateFilter}
-          onValueChange={(value) => onFiltersChange({ stateFilter: value as any })}
+          onValueChange={(value) =>
+            onFiltersChange({ stateFilter: value as any })
+          }
         >
           <SelectTrigger className="w-full sm:w-[180px]">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="All">All States</SelectItem>
-            <SelectItem value="TODO">TODO</SelectItem>
-            <SelectItem value="In Progress">In Progress</SelectItem>
-            <SelectItem value="Done">Done</SelectItem>
+            <SelectItem value={TodoState.TODO}>TODO</SelectItem>
+            <SelectItem value={TodoState.IN_PROGRESS}>In Progress</SelectItem>
+            <SelectItem value={TodoState.DONE}>Done</SelectItem>
           </SelectContent>
         </Select>
 
@@ -99,7 +118,9 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
               id="dateFrom"
               type="date"
               value={filters.customDateFrom}
-              onChange={(e) => onFiltersChange({ customDateFrom: e.target.value })}
+              onChange={(e) =>
+                onFiltersChange({ customDateFrom: e.target.value })
+              }
             />
           </div>
           <div className="flex-1">
@@ -110,7 +131,9 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
               id="dateTo"
               type="date"
               value={filters.customDateTo}
-              onChange={(e) => onFiltersChange({ customDateTo: e.target.value })}
+              onChange={(e) =>
+                onFiltersChange({ customDateTo: e.target.value })
+              }
               min={filters.customDateFrom}
             />
           </div>
@@ -120,7 +143,7 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
               size="icon"
               onClick={() =>
                 onFiltersChange({
-                  dateFilter: "All",
+                  dateFilter: DateFilterOption.ALL,
                   customDateFrom: "",
                   customDateTo: "",
                 })
@@ -148,7 +171,9 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
           {filters.stateFilter !== "All" && (
             <FilterBadge
               label={`State: ${filters.stateFilter}`}
-              onRemove={() => onFiltersChange({ stateFilter: "All" })}
+              onRemove={() =>
+                onFiltersChange({ stateFilter: StateFilterOption.ALL })
+              }
             />
           )}
 
@@ -158,14 +183,16 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
                 filters.dateFilter === "Custom" &&
                 filters.customDateFrom &&
                 filters.customDateTo
-                  ? ` (${new Date(filters.customDateFrom).toLocaleDateString()} - ${new Date(
+                  ? ` (${new Date(
+                      filters.customDateFrom
+                    ).toLocaleDateString()} - ${new Date(
                       filters.customDateTo
                     ).toLocaleDateString()})`
                   : ""
               }`}
               onRemove={() =>
                 onFiltersChange({
-                  dateFilter: "All",
+                  dateFilter: DateFilterOption.ALL,
                   customDateFrom: "",
                   customDateTo: "",
                 })
@@ -173,7 +200,12 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
             />
           )}
 
-          <Button variant="ghost" size="sm" onClick={onClearAll} className="h-7">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClearAll}
+            className="h-7"
+          >
             Clear all
           </Button>
         </div>
@@ -183,7 +215,13 @@ export function TodoFilters({ filters, onFiltersChange, onClearAll }: TodoFilter
 }
 
 // Internal component: Filter badge with remove button
-function FilterBadge({ label, onRemove }: { label: string; onRemove: () => void }): JSX.Element {
+function FilterBadge({
+  label,
+  onRemove,
+}: {
+  label: string;
+  onRemove: () => void;
+}) {
   return (
     <Button variant="secondary" size="sm" onClick={onRemove} className="h-7">
       {label}

@@ -8,6 +8,9 @@
 
 import { Todo, TodoFilters, TodoStats } from "../types/todo";
 import { getDateRange, isDateInRange } from "./dateUtils";
+import {
+  TodoState,
+} from "../types/todo";
 
 /**
  * Filters todos based on search query (description or userId)
@@ -49,7 +52,7 @@ export function filterByDate(
 
   // Special case: Overdue filter should exclude completed tasks
   if (dateFilter === "Overdue") {
-    filtered = filtered.filter((todo) => todo.state !== "Done");
+    filtered = filtered.filter((todo) => todo.state !== TodoState.DONE);
   }
 
   return filtered;
@@ -81,8 +84,8 @@ export function applyAllFilters(todos: Todo[], filters: TodoFilters): Todo[] {
 export function calculateStats(todos: Todo[]): TodoStats {
   return {
     all: todos.length,
-    todo: todos.filter((t) => t.state === "TODO").length,
-    inProgress: todos.filter((t) => t.state === "In Progress").length,
-    done: todos.filter((t) => t.state === "Done").length,
+    [TodoState.TODO]: todos.filter((t) => t.state === TodoState.TODO).length,
+    [TodoState.IN_PROGRESS]: todos.filter((t) => t.state === TodoState.IN_PROGRESS).length,
+    [TodoState.DONE]: todos.filter((t) => t.state === TodoState.DONE).length,
   };
 }

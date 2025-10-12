@@ -10,7 +10,6 @@
 
 import React from "react";
 import { Card } from "../ui/card";
-import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import {
   DropdownMenu,
@@ -19,7 +18,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { MoreVertical, Edit, Trash2, Calendar, User } from "lucide-react";
-import { Todo, ViewMode } from "../../types/todo";
+import { Todo, TodoState, ViewMode } from "../../types/todo";
 import { formatDate, isOverdue } from "../../lib/dateUtils";
 
 interface TodoItemProps {
@@ -29,27 +28,22 @@ interface TodoItemProps {
   viewMode: ViewMode;
 }
 
-export function TodoItem({
-  todo,
-  onEdit,
-  onDelete,
-  viewMode,
-}: TodoItemProps): JSX.Element {
+export function TodoItem({ todo, onEdit, onDelete, viewMode }: TodoItemProps) {
   // Determine badge variant based on todo state
   const getStateBadgeVariant = (
     state: string
   ): "default" | "secondary" | "outline" => {
     switch (state) {
-      case "Done":
+      case TodoState.DONE:
         return "default";
-      case "In Progress":
+      case TodoState.IN_PROGRESS:
         return "secondary";
       default:
         return "outline";
     }
   };
 
-  const overdueStatus = isOverdue(todo.dueDate, todo.state === "Done");
+  const overdueStatus = isOverdue(todo.dueDate, todo.state === TodoState.DONE);
 
   // Handler to stop propagation when clicking dropdown menu
   const handleDropdownClick = (e: React.MouseEvent): void => {

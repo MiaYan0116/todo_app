@@ -1,6 +1,6 @@
 /**
  * Application header component
- * 
+ *
  * Purpose: Displays app branding and primary actions
  * Responsibility: Theme toggle, view mode toggle, add todo button
  * Pattern: Presentational component with callback props
@@ -8,9 +8,10 @@
 
 "use client";
 
+import React from "react";
 import { Button } from "../ui/button";
 import { Plus, Grid3x3, List, Moon, Sun } from "lucide-react";
-import { useTheme } from "next-themes@0.4.6";
+import { useTheme } from "next-themes";
 import { ViewMode } from "../../types/todo";
 
 interface AppHeaderProps {
@@ -23,7 +24,7 @@ export function AppHeader({
   viewMode,
   onToggleViewMode,
   onAddTodo,
-}: AppHeaderProps): JSX.Element {
+}: AppHeaderProps) {
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = (): void => {
@@ -34,7 +35,7 @@ export function AppHeader({
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <h1>TODO Manager</h1>
-          
+
           <div className="flex items-center gap-2">
             {/* View mode toggle - hidden on mobile */}
             <Button

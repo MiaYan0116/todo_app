@@ -1,24 +1,17 @@
 /**
- * Main application component
- * 
- * Purpose: Orchestrate the entire TODO application
- * Responsibility: 
- *   - Provide global context (TodoProvider)
- *   - Manage UI state (filters, view mode, modal state)
- *   - Coordinate communication between components
- * 
- * Architecture:
- *   - Uses TodoContext for todo data (separation of concerns)
- *   - Keeps UI state local (filters, view preferences)
- *   - Delegates rendering to specialized components
- *   - Acts as the "smart" container component
+ * App.tsx
+ * ------------
+ * Root component orchestrating the TODO application.
+ * Responsibilities:
+ * - Wraps providers (ThemeProvider, TodoProvider)
+ * - Manages UI states (filters, view mode, modal visibility)
+ * - Coordinates child components
  */
 
 "use client";
-
-import { useState } from "react";
-import { Toaster } from "sonner@2.0.3";
-import { ThemeProvider } from "next-themes@0.4.6";
+import React, { useState } from "react";
+import { Toaster } from "sonner";
+import { ThemeProvider } from "next-themes";
 import { TodoProvider, useTodos } from "./context/TodoContext";
 import { AppHeader } from "./components/layout/AppHeader";
 import { TodoStats } from "./components/layout/TodoStats";
@@ -27,26 +20,37 @@ import { TodoList } from "./components/todo/TodoList";
 import { TodoForm } from "./components/todo/TodoForm";
 import { useLocalStorage } from "./hooks/useLocalStorage";
 import { applyAllFilters, calculateStats } from "./lib/filterUtils";
-import { Todo, TodoFilters as TodoFiltersType, ViewMode } from "./types/todo";
+import {
+  Todo,
+  TodoFilters as TodoFiltersType,
+  ViewMode,
+  StateFilterOption,
+  DateFilterOption,
+} from "./types/todo";
+
+const DEFAULT_FILTERS: TodoFiltersType = {
+  searchQuery: "",
+  stateFilter: StateFilterOption.ALL,
+  dateFilter: DateFilterOption.ALL,
+  customDateFrom: "",
+  customDateTo: "",
+};
 
 // Main app content - separated to use context hooks
-function AppContent(): JSX.Element {
+function AppContent() {
   // Global todo state from context
   const { todos, addTodo, updateTodo, deleteTodo } = useTodos();
 
   // Local UI state (not shared globally)
-  const [viewMode, setViewMode] = useLocalStorage<ViewMode>("viewMode", "list");
+  const [viewMode, setViewMode] = useLocalStorage<ViewMode>(
+    "viewMode",
+    ViewMode.LIST
+  );
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
 
   // Filter state
-  const [filters, setFilters] = useState<TodoFiltersType>({
-    searchQuery: "",
-    stateFilter: "All",
-    dateFilter: "All",
-    customDateFrom: "",
-    customDateTo: "",
-  });
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
 
   // Derived state: Apply filters and calculate stats
   const filteredTodos = applyAllFilters(todos, filters);
@@ -54,7 +58,7 @@ function AppContent(): JSX.Element {
 
   // Event handlers
   const handleToggleViewMode = (): void => {
-    setViewMode(viewMode === "list" ? "grid" : "list");
+    setViewMode(viewMode === ViewMode.LIST ? ViewMode.GRID : ViewMode.LIST);
   };
 
   const handleAddTodo = (): void => {
@@ -75,22 +79,18 @@ function AppContent(): JSX.Element {
     }
   };
 
-  const handleFiltersChange = (newFilters: Partial<TodoFiltersType>): void => {
+  const handleFiltersChange = (newFilters: Partial<TodoFiltersType>) => {
     setFilters({ ...filters, ...newFilters });
   };
 
   const handleClearAllFilters = (): void => {
-    setFilters({
-      searchQuery: "",
-      stateFilter: "All",
-      dateFilter: "All",
-      customDateFrom: "",
-      customDateTo: "",
-    });
+    setFilters(DEFAULT_FILTERS);
   };
 
   const hasActiveFilters =
-    filters.searchQuery || filters.stateFilter !== "All" || filters.dateFilter !== "All";
+    !!filters.searchQuery ||
+    filters.stateFilter !== StateFilterOption.ALL ||
+    filters.dateFilter !== DateFilterOption.ALL;
 
   return (
     <div className="min-h-screen bg-background">
@@ -146,7 +146,7 @@ function AppContent(): JSX.Element {
 }
 
 // Root component: Wraps app in providers
-export default function App(): JSX.Element {
+export default function App() {
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <TodoProvider>

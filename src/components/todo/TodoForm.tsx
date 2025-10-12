@@ -1,6 +1,6 @@
 /**
  * TODO creation and editing form component
- * 
+ *
  * Purpose: Handle todo creation and editing in a modal dialog
  * Responsibility: Form state management, validation, and submission
  * Pattern: Controlled form component with local state
@@ -8,7 +8,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -36,38 +36,46 @@ interface TodoFormProps {
   editingTodo?: Todo | null;
 }
 
-export function TodoForm({ open, onOpenChange, onSave, editingTodo }: TodoFormProps): JSX.Element {
+export function TodoForm({
+  open,
+  onOpenChange,
+  onSave,
+  editingTodo,
+}: TodoFormProps) {
   const [formData, setFormData] = useState<Todo>({
     taskId: "",
     userId: "",
     description: "",
     dueDate: "",
-    state: "TODO",
+    state: TodoState.TODO,
   });
 
   // Reset form when dialog opens or editing todo changes
   useEffect(() => {
     if (editingTodo) {
-      setFormData(editingTodo);
+      setFormData({
+        ...editingTodo,
+        state: editingTodo.state as TodoState,
+      });
     } else {
       setFormData({
         taskId: Date.now().toString(), // Generate unique ID
         userId: "",
         description: "",
         dueDate: "",
-        state: "TODO",
+        state: TodoState.TODO,
       });
     }
   }, [editingTodo, open]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault();
-    
+
     // Basic validation
     if (!formData.userId || !formData.description || !formData.dueDate) {
       return;
     }
-    
+
     onSave(formData);
     onOpenChange(false);
   };
@@ -76,7 +84,9 @@ export function TodoForm({ open, onOpenChange, onSave, editingTodo }: TodoFormPr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>{editingTodo ? "Edit TODO" : "Add New TODO"}</DialogTitle>
+          <DialogTitle>
+            {editingTodo ? "Edit TODO" : "Add New TODO"}
+          </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit}>
@@ -87,7 +97,9 @@ export function TodoForm({ open, onOpenChange, onSave, editingTodo }: TodoFormPr
               <Input
                 id="userId"
                 value={formData.userId}
-                onChange={(e) => setFormData({ ...formData, userId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, userId: e.target.value })
+                }
                 placeholder="Enter user ID"
                 required
               />
@@ -99,7 +111,9 @@ export function TodoForm({ open, onOpenChange, onSave, editingTodo }: TodoFormPr
               <Textarea
                 id="description"
                 value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
+                }
                 placeholder="Enter task description"
                 required
                 rows={4}
@@ -113,7 +127,9 @@ export function TodoForm({ open, onOpenChange, onSave, editingTodo }: TodoFormPr
                 id="dueDate"
                 type="date"
                 value={formData.dueDate}
-                onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, dueDate: e.target.value })
+                }
                 required
               />
             </div>
@@ -123,22 +139,30 @@ export function TodoForm({ open, onOpenChange, onSave, editingTodo }: TodoFormPr
               <Label htmlFor="state">State</Label>
               <Select
                 value={formData.state}
-                onValueChange={(value: TodoState) => setFormData({ ...formData, state: value })}
+                onValueChange={(value: TodoState) =>
+                  setFormData({ ...formData, state: value })
+                }
               >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="TODO">TODO</SelectItem>
-                  <SelectItem value="In Progress">In Progress</SelectItem>
-                  <SelectItem value="Done">Done</SelectItem>
+                  <SelectItem value={TodoState.TODO}>TODO</SelectItem>
+                  <SelectItem value={TodoState.IN_PROGRESS}>
+                    In Progress
+                  </SelectItem>
+                  <SelectItem value={TodoState.DONE}>Done</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit">{editingTodo ? "Update" : "Add"} TODO</Button>

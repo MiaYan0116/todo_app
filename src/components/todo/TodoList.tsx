@@ -1,6 +1,6 @@
 /**
  * TODO list container component
- * 
+ *
  * Purpose: Render a list/grid of todos or empty state
  * Responsibility: Layout orchestration, delegates rendering to TodoItem
  * Pattern: Container/presenter pattern
@@ -8,6 +8,7 @@
 
 "use client";
 
+import React from "react";
 import { Button } from "../ui/button";
 import { Plus, Grid3x3, List } from "lucide-react";
 import { TodoItem } from "./TodoItem";
@@ -31,7 +32,7 @@ export function TodoList({
   onDelete,
   onAddTodo,
   hasActiveFilters,
-}: TodoListProps): JSX.Element {
+}: TodoListProps) {
   // Empty state
   if (todos.length === 0) {
     return (
