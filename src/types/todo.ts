@@ -5,12 +5,6 @@
  * Benefits: Single source of truth, prevents type duplication, easier refactoring
  */
 
-export enum Theme {
-  LIGHT = 'light',
-  DARK = 'dark',
-}
-
-
 export type TodoState = "TODO" | "In Progress" | "Done";
 
 export interface Todo {
@@ -20,11 +14,6 @@ export interface Todo {
   dueDate: string; // ISO date string format
   state: TodoState;
 }
-
-export enum ViewModeEnum {
-  LIST = 'list',
-  GRID = 'grid'
-};
 
 export type ViewMode = "list" | "grid";
 

@@ -1,13 +1,7 @@
-import React, { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { ThemeProvider } from "next-themes";
-import App from "./App.js";
-import "./index.css";
 
-createRoot(document.getElementById("root")!).render(
-  // <StrictMode>
-  <ThemeProvider attribute="class" defaultTheme="light">
-    <App />
-  </ThemeProvider>
-  // </StrictMode>
-);
+  import { createRoot } from "react-dom/client";
+  import App from "./App.tsx";
+  import "./index.css";
+
+  createRoot(document.getElementById("root")!).render(<App />);
+  
