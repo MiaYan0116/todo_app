@@ -32,8 +32,7 @@ context-based state management, and local persistence using browser storage.
 <summary><b>🧰 Installation & Setup</b></summary>
 <br/>
 
-<pre><code>git clone https://github.com/company/todo-app.git
-cd todo-app
+<pre><code>
 npm install
 </code></pre>
 
@@ -42,7 +41,7 @@ Start local dev server:
 <pre><code>npm run dev
 </code></pre>
 
-Visit <a href="http://localhost:5173" target="_blank">http://localhost:5173</a>
+Visit <a href="http://localhost:3000" target="_blank">http://localhost:5173</a>
 
 </details>
 
