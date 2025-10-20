@@ -41,8 +41,6 @@ Start local dev server:
 <pre><code>npm run dev
 </code></pre>
 
-Visit <a href="http://localhost:3000" target="_blank">http://localhost:5173</a>
-
 </details>
 
 <details>
